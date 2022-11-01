@@ -94,7 +94,7 @@ function SelectScreen() {
     },
   ];
   const url =
-    'https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=LDS&destinationStation=KGX&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-11-04T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false';
+    `https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/${outStation}/${inStation}/#LiveDepResults`;
 
   return (
     <Surface style={styles.containerStyle}>
