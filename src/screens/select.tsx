@@ -6,46 +6,7 @@ import { SafeAreaView, StyleSheet, View, Linking } from 'react-native';
 import { Text, Button, Appbar, Surface } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#eee',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   dropdownContainer: {
-//     backgroundColor: '#eee',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     display: 'flex',
-//     flexDirection: 'row',
-//   },
-//   text: {
-//     paddingBottom: 24,
-//   },
-//   dropdownHighlight: {
-//     backgroundColor: '#d4b5eb',
-//   },
-//   dropdownText: {
-//     backgroundColor: '#abd7ed',
-//     borderRadius: 10,
-//     height: 35,
-//     width: 100,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     margin: 10,
-//   },
-//   dropdownList: {
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     width: 100,
-//     textAlign: 'center',
-//     position: 'absolute',
-//     right: 0,
-//     zIndex: 1,
-//   },
-// });
+import { config } from '../config';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -67,12 +28,12 @@ const styles = StyleSheet.create({
 });
 
 type SelectScreenProps = ScreenNavigationProps<'Select'>;
-
 const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
   const [showDropDown2, setShowDropDown2] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('TBD');
   const stationList = [
     {
       label: 'London Euston',
@@ -95,8 +56,24 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
       value: 'EDB',
     },
   ];
-  const url = `https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/${outStation}/${inStation}/#LiveDepResults`;
-
+  const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-07-24T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false`;
+  const fetchData = async () => {
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': config.apiKey,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setStatusMessage(JSON.stringify(response));
+      })
+      .catch((error) => {
+        setStatusMessage(JSON.stringify(error));
+      });
+  };
   return (
     <View style={styles.containerStyle}>
       <View style={styles.safeContainerStyle}>
@@ -123,7 +100,8 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         />
       </View>
       <View>
-        <Button onPress={async () => await Linking.openURL(url)}>Submit</Button>
+        <Text>API Status : {statusMessage}</Text>
+        <Button onPress={fetchData}>Submit</Button>
       </View>
     </View>
   );
