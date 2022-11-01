@@ -1,10 +1,9 @@
 /* eslint-disable indent */
 //import React from 'react';
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Linking } from 'react-native';
 import { Text, Button, Appbar, Surface } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
-//import ModalDropdown from 'react-native-modal-dropdown';
 import { ScreenNavigationProps } from '../routes';
 
 // const styles = StyleSheet.create({
@@ -49,14 +48,17 @@ import { ScreenNavigationProps } from '../routes';
 
 const styles = StyleSheet.create({
   containerStyle: {
-    flex: 1,
-    flexDirection: 'row',
+    backgroundColor: '#eee',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   spacerStyle: {
     marginBottom: 15,
+    margin: 10,
   },
   safeContainerStyle: {
     flex: 1,
+    flexDirection: 'row',
     margin: 20,
     justifyContent: 'center',
   },
@@ -65,8 +67,9 @@ const styles = StyleSheet.create({
 type SelectScreenProps = ScreenNavigationProps<'Select'>;
 function SelectScreen() {
   const [showDropDown, setShowDropDown] = useState(false);
-  const [station, setStation] = useState<string>('');
-  const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
+  const [outStation, setOutStation] = useState<string>('');
+  const [inStation, setInStation] = useState<string>('');
+  const [showDropDown2, setShowDropDown2] = useState(false);
   const stationList = [
     {
       label: 'EUS',
@@ -89,6 +92,8 @@ function SelectScreen() {
       value: 'EDB',
     },
   ];
+  const url =
+    'https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=LDS&destinationStation=KGX&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-11-04T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false';
 
   return (
     <Surface style={styles.containerStyle}>
@@ -99,39 +104,27 @@ function SelectScreen() {
           visible={showDropDown}
           showDropDown={() => setShowDropDown(true)}
           onDismiss={() => setShowDropDown(false)}
-          value={station}
-          setValue={setStation}
+          value={outStation}
+          setValue={setOutStation}
           list={stationList}
         />
         <View style={styles.spacerStyle} />
         <DropDown
           label={'Station'}
           mode={'outlined'}
-          visible={showMultiSelectDropDown}
-          showDropDown={() => setShowDropDown(true)}
-          onDismiss={() => setShowDropDown(false)}
-          value={station}
-          setValue={setStation}
+          visible={showDropDown2}
+          showDropDown={() => setShowDropDown2(true)}
+          onDismiss={() => setShowDropDown2(false)}
+          value={inStation}
+          setValue={setInStation}
           list={stationList}
-          multiSelect
         />
+      </SafeAreaView>
+      <SafeAreaView>
+        <Button onPress={async () => await Linking.openURL(url)}>Submit</Button>
       </SafeAreaView>
     </Surface>
   );
 }
-
-// type SelectScreenProps = ScreenNavigationProps<'Select'>;
-// const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => (
-//   <View style={styles.container}>
-//     <Text style={styles.text}>Select a Station</Text>
-//     <Dropdown
-//       label={'Select a station'}
-//       mode={'outlined'}
-//       visible={showDropdown}
-//       showDropdown={() => setShowDropdown(true)}
-//       list={['EUS', 'MAN', 'YRK', 'LDS', 'EDB']}
-//     />
-//   </View>
-// );
 
 export default SelectScreen;
