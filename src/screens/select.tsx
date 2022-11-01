@@ -11,10 +11,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  dropdownContainer: {
+    backgroundColor: '#eee',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    display: 'flex',
+    flexDirection: 'row',
+  },
   text: {
     paddingBottom: 24,
   },
-  dropdown: {
+  dropdownHighlight: {
     backgroundColor: '#d4b5eb',
   },
   dropdownText: {
@@ -24,6 +31,7 @@ const styles = StyleSheet.create({
     width: 100,
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 10,
   },
   dropdownList: {
     justifyContent: 'center',
@@ -41,13 +49,22 @@ type SelectScreenProps = ScreenNavigationProps<'Select'>;
 const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => (
   <View style={styles.container}>
     <Text style={styles.text}>Select a Station</Text>
-    <ModalDropdown
-      style={styles.dropdownText}
-      textStyle={{ fontSize: 15 }}
-      dropdownTextHighlightStyle={styles.dropdown}
-      dropdownStyle={styles.dropdownList}
-      options={['MAN', 'LDN']}
-    />
+    <View style={styles.dropdownContainer}>
+      <ModalDropdown
+        style={styles.dropdownText}
+        textStyle={{ fontSize: 15 }}
+        dropdownTextHighlightStyle={styles.dropdownHighlight}
+        dropdownStyle={styles.dropdownList}
+        options={['EUS', 'MAN', 'YRK', 'LDS', 'EDB']}
+      />
+      <ModalDropdown
+        style={styles.dropdownText}
+        textStyle={{ fontSize: 15 }}
+        dropdownTextHighlightStyle={styles.dropdownHighlight}
+        dropdownStyle={styles.dropdownList}
+        options={['EUS', 'MAN', 'YRK', 'LDS', 'EDB']}
+      />
+    </View>
   </View>
 );
 
