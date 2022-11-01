@@ -7,6 +7,7 @@ import theme from './src/theme';
 import { RootStackParamList } from './src/routes';
 import DetailsScreen from './src/screens/details';
 import HomeScreen from './src/screens/home';
+import SelectScreen from './src/screens/select';
 import 'react-native-gesture-handler';
 import { config } from './src/config';
 
@@ -19,6 +20,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 enum Routes {
   HOME = 'Home',
   DETAILS = 'Details',
+  SELECT = 'Select',
 }
 
 const App: React.FC = () => (
@@ -32,6 +34,7 @@ const App: React.FC = () => (
       >
         <Stack.Screen name={Routes.HOME} component={HomeScreen} />
         <Stack.Screen name={Routes.DETAILS} component={DetailsScreen} />
+        <Stack.Screen name={Routes.SELECT} component={SelectScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   </PaperProvider>

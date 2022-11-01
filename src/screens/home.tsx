@@ -24,6 +24,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => (
     <Button mode="contained" onPress={() => navigation.navigate('Details')}>
       Go to details
     </Button>
+    <Button mode="contained" onPress={() => navigation.navigate('Select')}>
+      Go to selection
+    </Button>
   </View>
 );
 
