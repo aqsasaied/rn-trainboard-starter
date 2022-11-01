@@ -48,6 +48,7 @@ import { ScreenNavigationProps } from '../routes';
 
 const styles = StyleSheet.create({
   containerStyle: {
+    flex: 1,
     backgroundColor: '#eee',
     alignItems: 'center',
     justifyContent: 'center',
@@ -55,9 +56,9 @@ const styles = StyleSheet.create({
   spacerStyle: {
     marginBottom: 15,
     margin: 10,
+    width: 50,
   },
   safeContainerStyle: {
-    flex: 1,
     flexDirection: 'row',
     margin: 20,
     justifyContent: 'center',
