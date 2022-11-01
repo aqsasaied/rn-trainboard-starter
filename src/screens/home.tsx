@@ -14,6 +14,9 @@ const styles = StyleSheet.create({
   text: {
     paddingBottom: 24,
   },
+  buttonStyle: {
+    margin: 10,
+  },
 });
 
 type HomeScreenProps = ScreenNavigationProps<'Home'>;
@@ -24,7 +27,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => (
     <Button mode="contained" onPress={() => navigation.navigate('Details')}>
       Go to details
     </Button>
-    <Button mode="contained" onPress={() => navigation.navigate('Select')}>
+    <Button
+      style={styles.buttonStyle}
+      mode="contained"
+      onPress={() => navigation.navigate('Select')}
+    >
       Go to selection
     </Button>
   </View>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable indent */
 //import React from 'react';
 import React, { useState } from 'react';
@@ -66,39 +67,39 @@ const styles = StyleSheet.create({
 });
 
 type SelectScreenProps = ScreenNavigationProps<'Select'>;
-function SelectScreen() {
+
+const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
   const [showDropDown2, setShowDropDown2] = useState(false);
   const stationList = [
     {
-      label: 'EUS',
+      label: 'London Euston',
       value: 'EUS',
     },
     {
-      label: 'MAN',
+      label: 'Manchester Piccadilly',
       value: 'MAN',
     },
     {
-      label: 'YRK',
+      label: 'York',
       value: 'YRK',
     },
     {
-      label: 'LDS',
+      label: 'Leeds',
       value: 'LDS',
     },
     {
-      label: 'EDB',
+      label: 'Edinburgh Waverly',
       value: 'EDB',
     },
   ];
-  const url =
-    `https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/${outStation}/${inStation}/#LiveDepResults`;
+  const url = `https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/${outStation}/${inStation}/#LiveDepResults`;
 
   return (
-    <Surface style={styles.containerStyle}>
-      <SafeAreaView style={styles.safeContainerStyle}>
+    <View style={styles.containerStyle}>
+      <View style={styles.safeContainerStyle}>
         <DropDown
           label={'Station'}
           mode={'outlined'}
@@ -120,12 +121,12 @@ function SelectScreen() {
           setValue={setInStation}
           list={stationList}
         />
-      </SafeAreaView>
-      <SafeAreaView>
+      </View>
+      <View>
         <Button onPress={async () => await Linking.openURL(url)}>Submit</Button>
-      </SafeAreaView>
-    </Surface>
+      </View>
+    </View>
   );
-}
+};
 
 export default SelectScreen;
