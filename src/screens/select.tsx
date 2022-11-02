@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 //import React from 'react';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -6,6 +5,7 @@ import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
+import { Journey } from '../models';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -28,8 +28,7 @@ const styles = StyleSheet.create({
 });
 
 type SelectScreenProps = ScreenNavigationProps<'Select'>;
-// eslint-disable-next-line no-empty-pattern
-const SelectScreen: React.FC<SelectScreenProps> = ({}) => {
+const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
@@ -58,9 +57,8 @@ const SelectScreen: React.FC<SelectScreenProps> = ({}) => {
     },
   ];
   const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-11-24T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false`;
-  const fetchData = async () => {
-    console.log(url);
-    await fetch(url, {
+  const fetchData = () => {
+    fetch(url, {
       method: 'GET',
       headers: {
         'X-API-KEY': config.apiKey,
@@ -69,10 +67,12 @@ const SelectScreen: React.FC<SelectScreenProps> = ({}) => {
       },
     })
       .then((response) => response.json())
+      .then((response) => response as Journey)
       .then((response) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        console.log(response.outboundJourneys);
         setStatusMessage(JSON.stringify('Success'));
+        return navigation.navigate('Journeys', {
+          journeysDetails: response.outboundJourneys,
+        });
       })
       .catch((error) => {
         console.log('Oops', error);
