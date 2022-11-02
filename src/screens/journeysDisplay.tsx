@@ -54,28 +54,28 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
           <DataTable.Title>Operator</DataTable.Title>
           <DataTable.Title>Price</DataTable.Title>
         </DataTable.Header>
-        <DataTable.Row>
-          <DataTable.Cell>{details[0].originStation.crs}</DataTable.Cell>
-          <DataTable.Cell>{details[0].destinationStation.crs}</DataTable.Cell>
-          <DataTable.Cell>{details[0].departureTime}</DataTable.Cell>
-          <DataTable.Cell>{details[0].arrivalTime}</DataTable.Cell>
-          <DataTable.Cell>
-            {details[0].primaryTrainOperator.code}
-          </DataTable.Cell>
-          <DataTable.Cell>
-            {details[0].tickets[0].priceInPennies}
-          </DataTable.Cell>
-        </DataTable.Row>
+        {details.map((detail, index: number) => (
+          <DataTable.Row key={index}>
+            <DataTable.Cell>{detail.originStation.crs}</DataTable.Cell>
+            <DataTable.Cell>{detail.destinationStation.crs}</DataTable.Cell>
+            <DataTable.Cell>
+              {detail.departureTime.substring(11, 16)}
+            </DataTable.Cell>
+            <DataTable.Cell>
+              {detail.arrivalTime.substring(11, 16)}
+            </DataTable.Cell>
+            <DataTable.Cell>{detail.primaryTrainOperator.code}</DataTable.Cell>
+            <DataTable.Cell>{detail.tickets[0].priceInPennies}</DataTable.Cell>
+          </DataTable.Row>
+        ))}
       </DataTable>
-      <Button mode="contained" onPress={() => navigation.navigate('Details')}>
-        Go to details
-      </Button>
+
       <Button
         style={styles.buttonStyle}
         mode="contained"
         onPress={() => navigation.navigate('Select')}
       >
-        Go to selection
+        Search again?
       </Button>
     </View>
   );
