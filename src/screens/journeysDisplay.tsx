@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 //import React from 'react';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, Button } from 'react-native-paper';
-import { OutboundJourneysEntity } from '../models';
+import { Text, Button, DataTable } from 'react-native-paper';
 import { ScreenNavigationProps } from '../routes';
 
 const styles = StyleSheet.create({
@@ -44,15 +43,30 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
   route,
 }) => {
   const details = route.params.journeysDetails;
-  const names = [];
-  let i = 0;
-  while (i < details.length) {
-    names.push(details[i].journeyId);
-    i++;
-  }
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{JSON.stringify(names)}</Text>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Departure Station</DataTable.Title>
+          <DataTable.Title>Arrival Station</DataTable.Title>
+          <DataTable.Title>Departure Time</DataTable.Title>
+          <DataTable.Title>Arrival Time</DataTable.Title>
+          <DataTable.Title>Operator</DataTable.Title>
+          <DataTable.Title>Price</DataTable.Title>
+        </DataTable.Header>
+        <DataTable.Row>
+          <DataTable.Cell>{details[0].originStation.crs}</DataTable.Cell>
+          <DataTable.Cell>{details[0].destinationStation.crs}</DataTable.Cell>
+          <DataTable.Cell>{details[0].departureTime}</DataTable.Cell>
+          <DataTable.Cell>{details[0].arrivalTime}</DataTable.Cell>
+          <DataTable.Cell>
+            {details[0].primaryTrainOperator.code}
+          </DataTable.Cell>
+          <DataTable.Cell>
+            {details[0].tickets[0].priceInPennies}
+          </DataTable.Cell>
+        </DataTable.Row>
+      </DataTable>
       <Button mode="contained" onPress={() => navigation.navigate('Details')}>
         Go to details
       </Button>
