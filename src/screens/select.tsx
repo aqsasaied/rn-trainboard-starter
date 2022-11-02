@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable indent */
 //import React from 'react';
 import React, { useState } from 'react';
@@ -66,39 +67,39 @@ const styles = StyleSheet.create({
 });
 
 type SelectScreenProps = ScreenNavigationProps<'Select'>;
-function SelectScreen() {
+
+const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
   const [showDropDown2, setShowDropDown2] = useState(false);
   const stationList = [
     {
-      label: 'EUS',
+      label: 'London Euston',
       value: 'EUS',
     },
     {
-      label: 'MAN',
+      label: 'Manchester Piccadilly',
       value: 'MAN',
     },
     {
-      label: 'YRK',
+      label: 'York',
       value: 'YRK',
     },
     {
-      label: 'LDS',
+      label: 'Leeds',
       value: 'LDS',
     },
     {
-      label: 'EDB',
+      label: 'Edinburgh Waverly',
       value: 'EDB',
     },
   ];
-  const url =
-    'https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=LDS&destinationStation=KGX&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-11-04T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false';
+  const url = `https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/${outStation}/${inStation}/#LiveDepResults`;
 
   return (
-    <Surface style={styles.containerStyle}>
-      <SafeAreaView style={styles.safeContainerStyle}>
+    <View style={styles.containerStyle}>
+      <View style={styles.safeContainerStyle}>
         <DropDown
           label={'Station'}
           mode={'outlined'}
@@ -120,12 +121,12 @@ function SelectScreen() {
           setValue={setInStation}
           list={stationList}
         />
-      </SafeAreaView>
-      <SafeAreaView>
+      </View>
+      <View>
         <Button onPress={async () => await Linking.openURL(url)}>Submit</Button>
-      </SafeAreaView>
-    </Surface>
+      </View>
+    </View>
   );
-}
+};
 
 export default SelectScreen;
