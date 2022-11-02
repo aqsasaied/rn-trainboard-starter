@@ -5,7 +5,10 @@ export interface Journey {
   nextOutboundQuery: string;
   previousOutboundQuery: string;
   bookingMessages: BookingMessages;
+  error: string | null;
+  error_description: string | null;
 }
+
 export interface OutboundJourneysEntity {
   journeyOptionToken: string;
   journeyId: string;

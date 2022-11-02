@@ -69,10 +69,14 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
       .then((response) => response.json())
       .then((response) => response as Journey)
       .then((response) => {
-        setStatusMessage(JSON.stringify('Success'));
-        return navigation.navigate('Journeys', {
-          journeysDetails: response.outboundJourneys,
-        });
+        if (response.error) {
+          setStatusMessage(response.error_description);
+        } else {
+          setStatusMessage('TBD');
+          return navigation.navigate('Journeys', {
+            journeysDetails: response.outboundJourneys,
+          });
+        }
       })
       .catch((error) => {
         console.log('Oops', error);
@@ -105,7 +109,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         />
       </View>
       <View>
-        <Text>API Status : {statusMessage}</Text>
+        <Text>API status: {statusMessage}</Text>
         <Button onPress={fetchData}>Submit</Button>
       </View>
     </View>
