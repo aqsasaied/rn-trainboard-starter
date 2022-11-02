@@ -52,7 +52,7 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
           <DataTable.Title>Departure Time</DataTable.Title>
           <DataTable.Title>Arrival Time</DataTable.Title>
           <DataTable.Title>Operator</DataTable.Title>
-          <DataTable.Title>Price</DataTable.Title>
+          <DataTable.Title>Total Price</DataTable.Title>
         </DataTable.Header>
         {details.map((detail, index: number) => (
           <DataTable.Row key={index}>
