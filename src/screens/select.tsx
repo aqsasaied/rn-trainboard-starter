@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable indent */
 //import React from 'react';
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Linking } from 'react-native';
-import { Text, Button, Appbar, Surface } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
@@ -17,18 +16,20 @@ const styles = StyleSheet.create({
   },
   spacerStyle: {
     marginBottom: 15,
-    margin: 10,
-    width: 50,
+    margin: 5,
   },
   safeContainerStyle: {
     flexDirection: 'row',
-    margin: 20,
+    margin: 10,
     justifyContent: 'center',
+    width: 180,
+    height: 75,
   },
 });
 
 type SelectScreenProps = ScreenNavigationProps<'Select'>;
-const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
+// eslint-disable-next-line no-empty-pattern
+const SelectScreen: React.FC<SelectScreenProps> = ({}) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
@@ -56,10 +57,11 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
       value: 'EDB',
     },
   ];
-  const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-07-24T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false`;
+  const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-11-24T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false`;
   const fetchData = async () => {
+    console.log(url);
     await fetch(url, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'X-API-KEY': config.apiKey,
         Accept: 'application/json',
@@ -68,9 +70,12 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then((response) => {
-        setStatusMessage(JSON.stringify(response));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        console.log(response.outboundJourneys);
+        setStatusMessage(JSON.stringify('Success'));
       })
       .catch((error) => {
+        console.log('Oops', error);
         setStatusMessage(JSON.stringify(error));
       });
   };
