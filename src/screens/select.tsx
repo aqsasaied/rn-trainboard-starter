@@ -53,7 +53,9 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = React.useState<string>('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [time, setTime] = useState('');
-  const stationList = [];
+  const [stationList, setStationList] = React.useState<
+    Array<Record<string, unknown>>
+  >([]);
   const stationsUrl = 'https://mobile-api-softwire2.lner.co.uk/v1/stations';
   const fetchStations = () => {
     fetch(stationsUrl, {
@@ -73,12 +75,13 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           setStatusMessage('TBD');
           if (response.stations) {
             response.stations.forEach((station) => {
-              if (station.crs && stationList.length < 5) {
+              if (station.crs && station.crs.length === 3) {
                 stationList.push({ label: station.name, value: station.crs });
               }
             });
           }
         }
+        setStationList(stationList);
       })
       .catch((error) => {
         console.log('Oops', error);
