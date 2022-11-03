@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
 import { Journey } from '../models';
 import CalendarPicker from 'react-native-calendar-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from '@react-native-community/datetimepicker';
+import RNDatePicker from '@react-native-community/datetimepicker';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -46,10 +49,13 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
   const [showDropDown2, setShowDropDown2] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('TBD');
+  const [statusMessage, setStatusMessage] = useState<string | null>('TBD');
   const [adults, setAdults] = React.useState<number>(0);
   const [children, setChildren] = React.useState<number>(0);
   const [selectedDate, setSelectedDate] = React.useState<string>('');
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('datetime');
+  const [show, setShow] = useState(false);
   const stationList = [
     {
       label: 'London Euston',
@@ -126,7 +132,21 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const changeDate = (date: moment.Moment) => {
     setSelectedDate(JSON.stringify(date.toDate()));
   };
-
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+  const showDatepicker = () => {
+    showMode('date');
+  };
+  const showTimepicker = () => {
+    showMode('time');
+  };
   return (
     <View style={styles.containerStyle}>
       <View style={styles.dropdowns}>
@@ -190,8 +210,24 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
       </View>
       <View style={styles.spacerStyle} />
       <View style={styles.calendarView}>
-        <Text>Calendar</Text>
         <CalendarPicker onDateChange={changeDate} />
+      </View>
+      <View>
+        <Button onPress={showDatepicker}>Show date picker!</Button>
+        <Button onPress={showTimepicker}>Show time picker!</Button>
+        <Text>selected: {date.toLocaleString()}</Text>
+        {show && (
+          <DateTimePicker
+            style={{ width: 320, backgroundColor: 'white' }}
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            onChange={onChange}
+            disabled={false}
+            display={'default'}
+          />
+        )}
       </View>
       <View>
         <Text>API status: {statusMessage}</Text>
