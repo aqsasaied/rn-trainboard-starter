@@ -4,7 +4,7 @@ import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
-import { Journey } from '../models';
+import { Journey, Stations, StationsEntity } from '../models';
 import CalendarPicker from 'react-native-calendar-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
@@ -53,35 +53,45 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = React.useState<string>('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [time, setTime] = useState('');
-  const stationList = [
-    {
-      label: 'London Euston',
-      value: 'EUS',
-    },
-    {
-      label: 'Manchester Piccadilly',
-      value: 'MAN',
-    },
-    {
-      label: 'York',
-      value: 'YRK',
-    },
-    {
-      label: 'Leeds',
-      value: 'LDS',
-    },
-    {
-      label: 'Edinburgh Waverly',
-      value: 'EDB',
-    },
-  ];
-  const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=${adults}&numberOfChildren=${children}&journeyType=single&outboundDateTime=${selectedDate.substring(
+  const stationList = [];
+  const stationsUrl = 'https://mobile-api-softwire2.lner.co.uk/v1/stations';
+  const fetchStations = () => {
+    fetch(stationsUrl, {
+      method: 'GET',
+      headers: {
+        'X-API-KEY': config.apiKey,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => response as Stations)
+      .then((response) => {
+        if (response.error) {
+          setStatusMessage(response.error_description);
+        } else {
+          setStatusMessage('TBD');
+          if (response.stations) {
+            response.stations.forEach((station) => {
+              if (station.crs && stationList.length < 5) {
+                stationList.push({ label: station.name, value: station.crs });
+              }
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        console.log('Oops', error);
+        setStatusMessage(JSON.stringify(error));
+      });
+  };
+  const searchUrl = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=${adults}&numberOfChildren=${children}&journeyType=single&outboundDateTime=${selectedDate.substring(
     1,
     11,
   )}T${time}.000%2B01%3A00&outboundIsArriveBy=false`;
   const fetchData = () => {
-    console.log(url);
-    fetch(url, {
+    console.log(searchUrl);
+    fetch(searchUrl, {
       method: 'GET',
       headers: {
         'X-API-KEY': config.apiKey,
@@ -144,6 +154,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
     console.log('A date has been picked: ', time);
     hideDatePicker();
   };
+  fetchStations();
   return (
     <View style={styles.wholePageContainer}>
       <View style={styles.dropdownBox}>
