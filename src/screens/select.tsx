@@ -6,9 +6,7 @@ import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
 import { Journey } from '../models';
 import CalendarPicker from 'react-native-calendar-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DatePicker from '@react-native-community/datetimepicker';
-import RNDatePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -53,9 +51,8 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [adults, setAdults] = React.useState<number>(0);
   const [children, setChildren] = React.useState<number>(0);
   const [selectedDate, setSelectedDate] = React.useState<string>('');
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('datetime');
-  const [show, setShow] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [time, setTime] = useState('');
   const stationList = [
     {
       label: 'London Euston',
@@ -81,7 +78,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=${adults}&numberOfChildren=${children}&journeyType=single&outboundDateTime=${selectedDate.substring(
     1,
     11,
-  )}T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false`;
+  )}T${time}.000%2B01%3A00&outboundIsArriveBy=false`;
   const fetchData = () => {
     console.log(url);
     fetch(url, {
@@ -132,20 +129,18 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const changeDate = (date: moment.Moment) => {
     setSelectedDate(JSON.stringify(date.toDate()));
   };
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setShow(false);
-    setDate(currentDate);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
   };
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
   };
-  const showDatepicker = () => {
-    showMode('date');
-  };
-  const showTimepicker = () => {
-    showMode('time');
+
+  const handleConfirm = (date: Date) => {
+    setTime(JSON.stringify(date).substring(12, 20).replace(/:/g, '%3A'));
+    console.log('A date has been picked: ', time);
+    hideDatePicker();
   };
   return (
     <View style={styles.containerStyle}>
@@ -213,21 +208,13 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <CalendarPicker onDateChange={changeDate} />
       </View>
       <View>
-        <Button onPress={showDatepicker}>Show date picker!</Button>
-        <Button onPress={showTimepicker}>Show time picker!</Button>
-        <Text>selected: {date.toLocaleString()}</Text>
-        {show && (
-          <DateTimePicker
-            style={{ width: 320, backgroundColor: 'white' }}
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            onChange={onChange}
-            disabled={false}
-            display={'default'}
-          />
-        )}
+        <Button onPress={showDatePicker}>Select Train Time</Button>
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="time"
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+        />
       </View>
       <View>
         <Text>API status: {statusMessage}</Text>
