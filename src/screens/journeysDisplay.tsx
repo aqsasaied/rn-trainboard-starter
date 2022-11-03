@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-//import React from 'react';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, Button, DataTable } from 'react-native-paper';
+import { Button, DataTable } from 'react-native-paper';
 import { ScreenNavigationProps } from '../routes';
 
 const styles = StyleSheet.create({
@@ -65,7 +63,9 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
               {detail.arrivalTime.substring(11, 16)}
             </DataTable.Cell>
             <DataTable.Cell>{detail.primaryTrainOperator.code}</DataTable.Cell>
-            <DataTable.Cell>{detail.tickets[0].priceInPennies}</DataTable.Cell>
+            <DataTable.Cell>
+              {detail.tickets && detail.tickets[0].priceInPennies}
+            </DataTable.Cell>
           </DataTable.Row>
         ))}
       </DataTable>
