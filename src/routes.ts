@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { Journey, OutboundJourneysEntity } from './models';
+import { OutboundJourneysEntity } from './models';
 
 export type ScreenNavigationProps<T extends keyof RootStackParamList> = {
   navigation: StackNavigationProp<RootStackParamList, T>;
@@ -9,7 +9,6 @@ export type ScreenNavigationProps<T extends keyof RootStackParamList> = {
 
 export type RootStackParamList = {
   Home: undefined;
-  Details: undefined;
   Select: undefined;
   Journeys: JourneyScreenParams;
 };

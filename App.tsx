@@ -5,7 +5,6 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import TopBar from './src/components/topBar';
 import theme from './src/theme';
 import { RootStackParamList } from './src/routes';
-import DetailsScreen from './src/screens/details';
 import HomeScreen from './src/screens/home';
 import SelectScreen from './src/screens/select';
 import JourneysScreen from './src/screens/journeysDisplay';
@@ -20,7 +19,6 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 enum Routes {
   HOME = 'Home',
-  DETAILS = 'Details',
   SELECT = 'Select',
   JOURNEYS = 'Journeys',
 }
@@ -35,7 +33,6 @@ const App: React.FC = () => (
         }}
       >
         <Stack.Screen name={Routes.HOME} component={HomeScreen} />
-        <Stack.Screen name={Routes.DETAILS} component={DetailsScreen} />
         <Stack.Screen name={Routes.SELECT} component={SelectScreen} />
         <Stack.Screen name={Routes.JOURNEYS} component={JourneysScreen} />
       </Stack.Navigator>
