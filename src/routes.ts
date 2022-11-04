@@ -11,5 +11,9 @@ export type RootStackParamList = {
   Home: undefined;
   Details: undefined;
   Select: undefined;
-  Journeys: undefined;
+  Journeys: JourneyScreenParams;
+};
+
+type JourneyScreenParams = {
+  journeysDetails: OutboundJourneysEntity[];
 };

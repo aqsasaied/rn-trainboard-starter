@@ -1,11 +1,12 @@
-//import React from 'react';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
 import { Journey } from '../models';
+import CalendarPicker from 'react-native-calendar-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -18,12 +19,25 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     margin: 5,
   },
-  safeContainerStyle: {
+  dropdowns: {
     flexDirection: 'row',
     margin: 10,
     justifyContent: 'center',
     width: 180,
     height: 75,
+  },
+  plusMinusButtonsBox: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  plusMinusButtons: {
+    width: 75,
+    height: 50,
+    justifyContent: 'center',
+    padding: 0,
+  },
+  calendarView: {
+    width: 300,
   },
 });
 
@@ -33,7 +47,12 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [outStation, setOutStation] = useState<string>('');
   const [inStation, setInStation] = useState<string>('');
   const [showDropDown2, setShowDropDown2] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('TBD');
+  const [statusMessage, setStatusMessage] = useState<string | null>('TBD');
+  const [adults, setAdults] = React.useState<number>(0);
+  const [children, setChildren] = React.useState<number>(0);
+  const [selectedDate, setSelectedDate] = React.useState<string>('');
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [time, setTime] = useState('');
   const stationList = [
     {
       label: 'London Euston',
@@ -56,8 +75,12 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
       value: 'EDB',
     },
   ];
-  const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=2&numberOfChildren=0&journeyType=single&outboundDateTime=2022-11-24T14%3A30%3A00.000%2B01%3A00&outboundIsArriveBy=false`;
+  const url = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=${adults}&numberOfChildren=${children}&journeyType=single&outboundDateTime=${selectedDate.substring(
+    1,
+    11,
+  )}T${time}.000%2B01%3A00&outboundIsArriveBy=false`;
   const fetchData = () => {
+    console.log(url);
     fetch(url, {
       method: 'GET',
       headers: {
@@ -83,9 +106,45 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         setStatusMessage(JSON.stringify(error));
       });
   };
+  const incAdult = () => {
+    if (adults < 6) {
+      setAdults(adults + 1);
+    }
+  };
+  const decAdult = () => {
+    if (adults > 0) {
+      setAdults(adults - 1);
+    }
+  };
+  const incChildren = () => {
+    if (children < 6) {
+      setChildren(children + 1);
+    }
+  };
+  const decChildren = () => {
+    if (children > 0) {
+      setChildren(children - 1);
+    }
+  };
+  const changeDate = (date: moment.Moment) => {
+    setSelectedDate(JSON.stringify(date.toDate()));
+  };
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    setTime(JSON.stringify(date).substring(12, 20).replace(/:/g, '%3A'));
+    console.log('A date has been picked: ', time);
+    hideDatePicker();
+  };
   return (
     <View style={styles.containerStyle}>
-      <View style={styles.safeContainerStyle}>
+      <View style={styles.dropdowns}>
         <DropDown
           label={'Station'}
           mode={'outlined'}
@@ -106,6 +165,55 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           value={inStation}
           setValue={setInStation}
           list={stationList}
+        />
+      </View>
+      <View style={styles.plusMinusButtonsBox}>
+        <Text>Adults: </Text>
+        <Button
+          style={styles.plusMinusButtons}
+          mode="contained"
+          onPress={decAdult}
+        >
+          -
+        </Button>
+        <Text>{adults}</Text>
+        <Button
+          style={styles.plusMinusButtons}
+          mode="contained"
+          onPress={incAdult}
+        >
+          +
+        </Button>
+      </View>
+      <View style={styles.plusMinusButtonsBox}>
+        <Text>Children: </Text>
+        <Button
+          style={styles.plusMinusButtons}
+          mode="contained"
+          onPress={decChildren}
+        >
+          -
+        </Button>
+        <Text>{children}</Text>
+        <Button
+          style={styles.plusMinusButtons}
+          mode="contained"
+          onPress={incChildren}
+        >
+          +
+        </Button>
+      </View>
+      <View style={styles.spacerStyle} />
+      <View style={styles.calendarView}>
+        <CalendarPicker onDateChange={changeDate} />
+      </View>
+      <View>
+        <Button onPress={showDatePicker}>Select Train Time</Button>
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="time"
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
         />
       </View>
       <View>
