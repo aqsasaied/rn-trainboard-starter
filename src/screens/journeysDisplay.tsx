@@ -22,7 +22,10 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
   route,
 }) => {
   const details = route.params.journeysDetails;
-  const mapJourneys = (detail: OutboundJourneysEntity, index: number) => {
+  const mapJourneysToTable = (
+    detail: OutboundJourneysEntity,
+    index: number,
+  ) => {
     return (
       <DataTable.Row key={index}>
         <DataTable.Cell>{detail.originStation.crs}</DataTable.Cell>
@@ -49,7 +52,7 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
           <DataTable.Title>Operator</DataTable.Title>
           <DataTable.Title>Total Price(p)</DataTable.Title>
         </DataTable.Header>
-        {details.map(mapJourneys)}
+        {details.map(mapJourneysToTable)}
       </DataTable>
 
       <Button
