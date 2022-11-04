@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
@@ -9,17 +9,17 @@ import CalendarPicker from 'react-native-calendar-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const styles = StyleSheet.create({
-  containerStyle: {
+  wholePageContainer: {
     flex: 1,
     backgroundColor: '#eee',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  spacerStyle: {
+  spacer: {
     marginBottom: 15,
     margin: 5,
   },
-  dropdowns: {
+  dropdownBox: {
     flexDirection: 'row',
     margin: 10,
     justifyContent: 'center',
@@ -96,9 +96,11 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           setStatusMessage(response.error_description);
         } else {
           setStatusMessage('TBD');
-          return navigation.navigate('Journeys', {
-            journeysDetails: response.outboundJourneys,
-          });
+          if (response.outboundJourneys) {
+            return navigation.navigate('Journeys', {
+              journeysDetails: response.outboundJourneys,
+            });
+          }
         }
       })
       .catch((error) => {
@@ -143,8 +145,8 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
     hideDatePicker();
   };
   return (
-    <View style={styles.containerStyle}>
-      <View style={styles.dropdowns}>
+    <View style={styles.wholePageContainer}>
+      <View style={styles.dropdownBox}>
         <DropDown
           label={'Station'}
           mode={'outlined'}
@@ -155,7 +157,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           setValue={setOutStation}
           list={stationList}
         />
-        <View style={styles.spacerStyle} />
+        <View style={styles.spacer} />
         <DropDown
           label={'Station'}
           mode={'outlined'}
@@ -203,7 +205,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           +
         </Button>
       </View>
-      <View style={styles.spacerStyle} />
+      <View style={styles.spacer} />
       <View style={styles.calendarView}>
         <CalendarPicker onDateChange={changeDate} />
       </View>
