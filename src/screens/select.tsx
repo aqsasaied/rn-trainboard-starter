@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
-import { Journey, Stations, StationsEntity } from '../models';
-import CalendarPicker from 'react-native-calendar-picker';
+import { Journey, Stations } from '../models';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const styles = StyleSheet.create({
@@ -52,41 +51,19 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
   const [children, setChildren] = React.useState<number>(0);
   const [selectedDate, setSelectedDate] = React.useState<string>('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [time, setTime] = useState('');
   const [stationList, setStationList] = React.useState<
-    Array<Record<string, unknown>>
+    { label: string; value: string }[]
   >([]);
   const stationsUrl = 'https://mobile-api-softwire2.lner.co.uk/v1/stations';
-  const fetchStations = () => {
-    fetch(stationsUrl, {
-      method: 'GET',
-      headers: {
-        'X-API-KEY': config.apiKey,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => response as Stations)
-      .then((response) => {
-        if (response.error) {
-          setStatusMessage(response.error_description);
-        } else {
-          setStatusMessage('TBD');
-          if (response.stations) {
-            response.stations.forEach((station) => {
-              if (station.crs && station.crs.length === 3) {
-                stationList.push({ label: station.name, value: station.crs });
-              }
-            });
-          }
-        }
-        setStationList(stationList);
-      })
-      .catch((error) => {
-        console.log('Oops', error);
-        setStatusMessage(JSON.stringify(error));
-      });
+  const PassengerAdjuster = (passenger: number, positive: boolean) => {
+    if (positive && passenger < 6) {
+      return passenger + 1;
+    } else if (!positive && passenger > 0) {
+      return passenger - 1;
+    }
+    return passenger;
   };
   const searchUrl = `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${outStation}&destinationStation=${inStation}&noChanges=false&numberOfAdults=${adults}&numberOfChildren=${children}&journeyType=single&outboundDateTime=${selectedDate.substring(
     1,
@@ -121,43 +98,61 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         setStatusMessage(JSON.stringify(error));
       });
   };
-  const incAdult = () => {
-    if (adults < 6) {
-      setAdults(adults + 1);
+  const showOrHidePicker = (dateOrTime: boolean, show: boolean) => {
+    if (dateOrTime && show) {
+      setDatePickerVisibility(true);
+    } else if (dateOrTime && !show) {
+      setDatePickerVisibility(false);
+    } else if (!dateOrTime && show) {
+      setTimePickerVisibility(true);
+    } else if (!dateOrTime && !show) {
+      setTimePickerVisibility(false);
     }
   };
-  const decAdult = () => {
-    if (adults > 0) {
-      setAdults(adults - 1);
-    }
+  const handleConfirmDate = (date: Date) => {
+    setSelectedDate(JSON.stringify(date));
+    showOrHidePicker(true, false);
   };
-  const incChildren = () => {
-    if (children < 6) {
-      setChildren(children + 1);
-    }
-  };
-  const decChildren = () => {
-    if (children > 0) {
-      setChildren(children - 1);
-    }
-  };
-  const changeDate = (date: moment.Moment) => {
-    setSelectedDate(JSON.stringify(date.toDate()));
-  };
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date: Date) => {
+  const handleConfirmTime = (date: Date) => {
     setTime(JSON.stringify(date).substring(12, 20).replace(/:/g, '%3A'));
     console.log('A date has been picked: ', time);
-    hideDatePicker();
+    showOrHidePicker(false, false);
   };
-  fetchStations();
+  useEffect(() => {
+    const fetchStations = () => {
+      console.log('hello');
+      fetch(stationsUrl, {
+        method: 'GET',
+        headers: {
+          'X-API-KEY': config.apiKey,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .then((response) => response as Stations)
+        .then((response) => {
+          if (response.error) {
+            setStatusMessage(response.error_description);
+          } else {
+            setStatusMessage('TBD');
+            if (response.stations) {
+              response.stations.forEach((station) => {
+                if (station.crs && station.crs.length === 3) {
+                  stationList.push({ label: station.name, value: station.crs });
+                }
+              });
+            }
+          }
+          setStationList(stationList);
+        })
+        .catch((error) => {
+          console.log('Oops', error);
+          setStatusMessage(JSON.stringify(error));
+        });
+    };
+    fetchStations();
+  }, [stationList]);
   return (
     <View style={styles.wholePageContainer}>
       <View style={styles.dropdownBox}>
@@ -188,7 +183,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={decAdult}
+          onPress={() => setAdults(PassengerAdjuster(adults, false))}
         >
           -
         </Button>
@@ -196,7 +191,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={incAdult}
+          onPress={() => setAdults(PassengerAdjuster(adults, true))}
         >
           +
         </Button>
@@ -206,7 +201,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={decChildren}
+          onPress={() => setChildren(PassengerAdjuster(children, false))}
         >
           -
         </Button>
@@ -214,22 +209,32 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={incChildren}
+          onPress={() => setChildren(PassengerAdjuster(children, true))}
         >
           +
         </Button>
       </View>
       <View style={styles.spacer} />
       <View style={styles.calendarView}>
-        <CalendarPicker onDateChange={changeDate} />
-      </View>
-      <View>
-        <Button onPress={showDatePicker}>Select Train Time</Button>
+        <Button onPress={() => showOrHidePicker(true, true)}>
+          Select Date
+        </Button>
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
+          mode="date"
+          onConfirm={handleConfirmDate}
+          onCancel={() => showOrHidePicker(true, false)}
+        />
+      </View>
+      <View>
+        <Button onPress={() => showOrHidePicker(false, true)}>
+          Select Train Time
+        </Button>
+        <DateTimePickerModal
+          isVisible={isTimePickerVisible}
           mode="time"
-          onConfirm={handleConfirm}
-          onCancel={hideDatePicker}
+          onConfirm={handleConfirmTime}
+          onCancel={() => showOrHidePicker(false, false)}
         />
       </View>
       <View>
