@@ -60,7 +60,7 @@ const JourneysScreen: React.FC<JourneysScreenProps> = ({
         mode="contained"
         onPress={() => navigation.navigate('Select')}
       >
-        Search again?
+        Search again
       </Button>
     </View>
   );
