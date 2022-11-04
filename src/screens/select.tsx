@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
-import DropDown from 'react-native-paper-dropdown';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
 import { Journey, Stations } from '../models';
