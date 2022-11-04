@@ -27,13 +27,17 @@ const styles = StyleSheet.create({
   },
   plusMinusButtonsBox: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
   },
   plusMinusButtons: {
-    width: 75,
-    height: 50,
     justifyContent: 'center',
-    padding: 0,
+    flexDirection: 'row',
+  },
+  plusMinusButtonBoxTest: {
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
+    width: 75,
+    height: 40,
   },
   calendarView: {
     width: 300,
@@ -98,25 +102,25 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         setStatusMessage(JSON.stringify(error));
       });
   };
-  const showOrHidePicker = (dateOrTime: boolean, show: boolean) => {
-    if (dateOrTime && show) {
+  const showOrHideDateTime = (isDate: boolean, show: boolean) => {
+    if (isDate && show) {
       setDatePickerVisibility(true);
-    } else if (dateOrTime && !show) {
+    } else if (isDate && !show) {
       setDatePickerVisibility(false);
-    } else if (!dateOrTime && show) {
+    } else if (!isDate && show) {
       setTimePickerVisibility(true);
-    } else if (!dateOrTime && !show) {
+    } else if (!isDate && !show) {
       setTimePickerVisibility(false);
     }
   };
   const handleConfirmDate = (date: Date) => {
     setSelectedDate(JSON.stringify(date));
-    showOrHidePicker(true, false);
+    showOrHideDateTime(true, false);
   };
   const handleConfirmTime = (date: Date) => {
     setTime(JSON.stringify(date).substring(12, 20).replace(/:/g, '%3A'));
     console.log('A date has been picked: ', time);
-    showOrHidePicker(false, false);
+    showOrHideDateTime(false, false);
   };
   const fetchStations = () => {
     const duplicateCheck = new Set();
@@ -167,6 +171,8 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           setOpen={setShowDropDown}
           setValue={setOutStation}
           searchable={true}
+          searchPlaceholder="Search stations"
+          placeholder="Select a station"
         />
         <View style={styles.spacer} />
         <DropDownPicker
@@ -176,65 +182,78 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
           setOpen={setShowDropDown2}
           setValue={setInStation}
           searchable={true}
+          searchPlaceholder="Search stations"
+          placeholder="Select a station"
         />
       </View>
       <View style={styles.plusMinusButtonsBox}>
         <Text>Adults: </Text>
-        <Button
-          style={styles.plusMinusButtons}
-          mode="contained"
-          onPress={() => setAdults(PassengerAdjuster(adults, false))}
-        >
-          -
-        </Button>
+        <View style={styles.plusMinusButtonBoxTest}>
+          <Button
+            style={styles.plusMinusButtons}
+            mode="contained"
+            onPress={() => setAdults(PassengerAdjuster(adults, false))}
+          >
+            -
+          </Button>
+        </View>
         <Text>{adults}</Text>
-        <Button
-          style={styles.plusMinusButtons}
-          mode="contained"
-          onPress={() => setAdults(PassengerAdjuster(adults, true))}
-        >
-          +
-        </Button>
+        <View style={styles.plusMinusButtonBoxTest}>
+          <Button
+            style={styles.plusMinusButtons}
+            mode="contained"
+            onPress={() => setAdults(PassengerAdjuster(adults, true))}
+          >
+            +
+          </Button>
+        </View>
       </View>
+      <View style={styles.spacer} />
       <View style={styles.plusMinusButtonsBox}>
         <Text>Children: </Text>
-        <Button
-          style={styles.plusMinusButtons}
-          mode="contained"
-          onPress={() => setChildren(PassengerAdjuster(children, false))}
-        >
-          -
-        </Button>
+        <View style={styles.plusMinusButtonBoxTest}>
+          <Button
+            style={styles.plusMinusButtons}
+            mode="contained"
+            onPress={() => setChildren(PassengerAdjuster(children, false))}
+          >
+            -
+          </Button>
+        </View>
         <Text>{children}</Text>
-        <Button
-          style={styles.plusMinusButtons}
-          mode="contained"
-          onPress={() => setChildren(PassengerAdjuster(children, true))}
-        >
-          +
-        </Button>
+        <View style={styles.plusMinusButtonBoxTest}>
+          <Button
+            style={styles.plusMinusButtons}
+            mode="contained"
+            onPress={() => setChildren(PassengerAdjuster(children, true))}
+          >
+            +
+          </Button>
+        </View>
       </View>
       <View style={styles.spacer} />
       <View style={styles.calendarView}>
-        <Button onPress={() => showOrHidePicker(true, true)}>
+        <Button onPress={() => showOrHideDateTime(true, true)}>
           Select Date
         </Button>
         <DateTimePickerModal
+          style={{ width: '100%' }}
           isVisible={isDatePickerVisible}
           mode="date"
+          display="default"
           onConfirm={handleConfirmDate}
-          onCancel={() => showOrHidePicker(true, false)}
+          onCancel={() => showOrHideDateTime(true, false)}
         />
       </View>
       <View>
-        <Button onPress={() => showOrHidePicker(false, true)}>
+        <Button onPress={() => showOrHideDateTime(false, true)}>
           Select Train Time
         </Button>
         <DateTimePickerModal
           isVisible={isTimePickerVisible}
           mode="time"
           onConfirm={handleConfirmTime}
-          onCancel={() => showOrHidePicker(false, false)}
+          onCancel={() => showOrHideDateTime(false, false)}
         />
       </View>
       <View>

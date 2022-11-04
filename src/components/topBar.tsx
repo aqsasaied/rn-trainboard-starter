@@ -2,6 +2,7 @@ import { StackHeaderProps } from '@react-navigation/stack';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
+import { color } from 'react-native-reanimated';
 import { getEqualHitSlop } from '../helpers/hitSlopHelper';
 
 type TopBarProps = StackHeaderProps;
@@ -13,10 +14,13 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
   },
+  appbar: {
+    backgroundColor: '#5614b8',
+  },
 });
 
 const TopBar: React.FC<TopBarProps> = ({ navigation, progress }) => (
-  <Appbar.Header>
+  <Appbar.Header style={styles.appbar}>
     {progress.previous && (
       <Appbar.BackAction
         style={styles.backButton}

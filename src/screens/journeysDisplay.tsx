@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 10,
+    buttonColor: '#5614b8',
   },
 });
 

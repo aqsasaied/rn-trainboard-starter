@@ -23,13 +23,13 @@ type HomeScreenProps = ScreenNavigationProps<'Home'>;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => (
   <View style={styles.container}>
-    <Text style={styles.text}>Home Screen</Text>
+    <Text style={styles.text}>Welcome to our amazing app</Text>
     <Button
       style={styles.buttonStyle}
       mode="contained"
       onPress={() => navigation.navigate('Select')}
     >
-      Go to selection
+      Search for a journey
     </Button>
   </View>
 );
