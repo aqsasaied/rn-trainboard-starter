@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, DataTable } from 'react-native-paper';
-import { OutboundJourneysEntity } from '../models';
+import { OutboundJourneysEntity } from '../models/journey';
 import { ScreenNavigationProps } from '../routes';
 
 const styles = StyleSheet.create({

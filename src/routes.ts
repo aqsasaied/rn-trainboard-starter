@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { OutboundJourneysEntity } from './models';
+import { OutboundJourneysEntity } from './models/journey';
 
 export type ScreenNavigationProps<T extends keyof RootStackParamList> = {
   navigation: StackNavigationProp<RootStackParamList, T>;

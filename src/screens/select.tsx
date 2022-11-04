@@ -3,7 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
-import { Journey, Stations } from '../models';
+import { Journey } from '../models/journey';
+import { Stations } from '../models/station';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
