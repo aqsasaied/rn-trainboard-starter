@@ -106,22 +106,22 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         setStatusMessage(JSON.stringify(error));
       });
   };
-  const incAdult = () => {
+  const increaseAdult = () => {
     if (adults < 6) {
       setAdults(adults + 1);
     }
   };
-  const decAdult = () => {
+  const decreaseAdult = () => {
     if (adults > 0) {
       setAdults(adults - 1);
     }
   };
-  const incChildren = () => {
+  const increaseChildren = () => {
     if (children < 6) {
       setChildren(children + 1);
     }
   };
-  const decChildren = () => {
+  const decreaseChildren = () => {
     if (children > 0) {
       setChildren(children - 1);
     }
@@ -172,7 +172,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={decAdult}
+          onPress={decreaseAdult}
         >
           -
         </Button>
@@ -180,7 +180,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={incAdult}
+          onPress={increaseAdult}
         >
           +
         </Button>
@@ -190,7 +190,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={decChildren}
+          onPress={decreaseChildren}
         >
           -
         </Button>
@@ -198,7 +198,7 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
         <Button
           style={styles.plusMinusButtons}
           mode="contained"
-          onPress={incChildren}
+          onPress={increaseChildren}
         >
           +
         </Button>
