@@ -6,6 +6,7 @@ import { ScreenNavigationProps } from '../routes';
 import { config } from '../config';
 import { Journey, Stations } from '../models';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const styles = StyleSheet.create({
   wholePageContainer: {
@@ -118,64 +119,64 @@ const SelectScreen: React.FC<SelectScreenProps> = ({ navigation }) => {
     console.log('A date has been picked: ', time);
     showOrHidePicker(false, false);
   };
-  useEffect(() => {
-    const fetchStations = () => {
-      console.log('hello');
-      fetch(stationsUrl, {
-        method: 'GET',
-        headers: {
-          'X-API-KEY': config.apiKey,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => response as Stations)
-        .then((response) => {
-          if (response.error) {
-            setStatusMessage(response.error_description);
-          } else {
-            setStatusMessage('TBD');
-            if (response.stations) {
-              response.stations.forEach((station) => {
+  const fetchStations = () => {
+    const duplicateCheck = new Set();
+    console.log('hello');
+    fetch(stationsUrl, {
+      method: 'GET',
+      headers: {
+        'X-API-KEY': config.apiKey,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => response as Stations)
+      .then((response) => {
+        if (response.error) {
+          setStatusMessage(response.error_description);
+        } else {
+          setStatusMessage('TBD');
+          if (response.stations) {
+            response.stations.forEach((station) => {
+              if (!duplicateCheck.has(station.crs)) {
+                duplicateCheck.add(station.crs);
                 if (station.crs && station.crs.length === 3) {
                   stationList.push({ label: station.name, value: station.crs });
                 }
-              });
-            }
+              }
+            });
+            setStationList(stationList);
           }
-          setStationList(stationList);
-        })
-        .catch((error) => {
-          console.log('Oops', error);
-          setStatusMessage(JSON.stringify(error));
-        });
-    };
+        }
+      })
+      .catch((error) => {
+        console.log('Oops', error);
+        setStatusMessage(JSON.stringify(error));
+      });
+  };
+  useEffect(() => {
     fetchStations();
-  }, [stationList]);
+  }, []);
   return (
     <View style={styles.wholePageContainer}>
       <View style={styles.dropdownBox}>
-        <DropDown
-          label={'Station'}
-          mode={'outlined'}
-          visible={showDropDown}
-          showDropDown={() => setShowDropDown(true)}
-          onDismiss={() => setShowDropDown(false)}
+        <DropDownPicker
+          open={showDropDown}
           value={outStation}
+          items={stationList}
+          setOpen={setShowDropDown}
           setValue={setOutStation}
-          list={stationList}
+          searchable={true}
         />
         <View style={styles.spacer} />
-        <DropDown
-          label={'Station'}
-          mode={'outlined'}
-          visible={showDropDown2}
-          showDropDown={() => setShowDropDown2(true)}
-          onDismiss={() => setShowDropDown2(false)}
+        <DropDownPicker
+          open={showDropDown2}
           value={inStation}
+          items={stationList}
+          setOpen={setShowDropDown2}
           setValue={setInStation}
-          list={stationList}
+          searchable={true}
         />
       </View>
       <View style={styles.plusMinusButtonsBox}>
